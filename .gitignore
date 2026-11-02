@@ -1,0 +1,15 @@
+# Real credentials — never commit this
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Playwright / pytest-playwright output
+screenshots/*.png
+test-results/
+
+# Virtual environments
+.venv/
+venv/
