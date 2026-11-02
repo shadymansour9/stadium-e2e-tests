@@ -10,6 +10,9 @@ __pycache__/
 screenshots/*.png
 test-results/
 
+# Local performance timing history — a per-machine run log, not source
+reports/
+
 # Virtual environments
 .venv/
 venv/

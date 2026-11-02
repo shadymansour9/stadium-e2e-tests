@@ -9,8 +9,11 @@ class LoginPage(BasePage):
     Flutter web paints everything into a single CanvasKit <canvas>, so there
     is no ordinary DOM to query — locators here depend on the accessibility
     (semantics) tree that `SemanticsBinding.instance.ensureSemantics()`
-    forces on at app startup (see lib/main.dart). Two different strategies
-    are used, chosen per element based on what the engine actually renders:
+    forces on (see lib/main.dart). That call is gated behind a `?e2e=1`
+    query param — building the semantics tree has a real performance cost,
+    so real users never pay for it; only `goto()` below opts into it, by
+    loading the app with that param. Two different locator strategies are
+    used, chosen per element based on what the engine actually renders:
 
     - Buttons / banners: `Semantics(identifier: "...")` reliably renders as
       a `flt-semantics-identifier` DOM attribute, so those are targeted by
@@ -39,7 +42,13 @@ class LoginPage(BasePage):
         super().__init__(page)
 
     def goto(self) -> None:
-        self.page.goto("/")
+        # ?e2e=1 opts into Flutter's semantics (accessibility) tree, which
+        # is what makes any of these locators findable (see lib/main.dart).
+        # It's gated behind this query param rather than always-on because
+        # building that tree on every frame has a real, measurable
+        # performance cost — not worth making real users pay for on every
+        # login/navigation/booking just so test runs can find elements.
+        self.page.goto("/?e2e=1")
         self.page.wait_for_selector(self.SUBMIT_BUTTON, state="attached")
 
     def _type(self, selector: str, text: str) -> None:
